@@ -2,14 +2,15 @@
 import tkinter as tk
 from tkinter import *
 
-import os
+from subprocess import check_call
+#import os
 from tkinter import messagebox
 import urllib
 from urllib.request import urlopen, URLopener #imports urlopen, urlopener
-from platform import machine #for platform machine version to detect os architecture
+from platform import machine #for platform machine version to detect OS architecture
 	
 master = tk.Tk()
-
+####IOError catches can't find file
 #Variables for program checkbox variables. 0 is unchecked, 1 is checked
 chrome = tk.IntVar()
 firefox = tk.IntVar()
@@ -23,7 +24,15 @@ dropbox = tk.IntVar()
 
 
 #Test string for test output
-test1 = tk.StringVar()
+text1 = tk.StringVar()
+
+#Changes the title of the tkinter window
+master.title("")
+try: #Try to import logo, if moved or renamed will fail. Place logo in same folder as program or program launcher
+	#Changes the logo of the tkinter window
+	master.iconbitmap('MM_Logo.ico')
+except:
+	text1.set("Icon import error")
 
 #Get online installer and run file once downloaded
 def online_install():
@@ -32,9 +41,15 @@ def online_install():
 	#Create object to open url
 	ninite = URLopener()
 	#Download file from url and save as installer.exe
-	ninite.retrieve(url, 'ninite.exe')
+	try:
+		ninite.retrieve(url, 'ninite.exe')
+	except: #Error in retrieving website
+		text1.set('Ninite website could\nnot be accessed')
 	#Run the file
-	os.system('ninite.exe')
+	try:
+		check_call('ninite.exe', shell=True)
+	except: #Error in running file
+		text1.set('Error running ninite file')
 
 #Creates url to get ninite file from, checks all check boxes
 def urlCreate():
@@ -63,48 +78,84 @@ def urlCreate():
 	#Remove extra - (or extra / if nothing checked)
 	url = url[:-1]
 	url += '/ninite.exe'
-	test1.set(url)
+	#text1.set(url)
 	return url
 
 #Get and run local installer (takes in 
 def local_install():
 	if messagebox.askokcancel("Warning", "This process will start each installer one after another\nThis program will be unresponsive during installs\nDon't exit the program or installs will stop"):	
 		#Check for state of checkboxes
+		#Old method of using check_call('filepath') create pop up console, subprocess.check_call doesn't
+		text1.set(str(machine()))
 		if zip.get():
 			#Run the file
-			#os.system('Installers\zip_32bit.exe')
-			#test1.set(machine())
+			#check_call('Installers\zip_32bit.exe', shell=True)
+			#text1.set(machine())
 			if machine() == 'AMD64':
-				os.system('Installers\zip_64bit.msi')
-			####add other if statements
+				try:
+					check_call('Installers\zip_64bit.msi', shell=True)
+				except:
+					text1.set('7_Zip local install error')
+				
+			####add other if statements for other systems if necessary
 			else:
-				os.system('Installers\zip_32bit.exe')
+				try:
+					check_call('Installers\zip_32bit.exe', shell=True)
+				except:
+					text1.set('7-Zip local install error')
 		if chrome.get():
 			#Run the file
-			os.system('Installers\chrome.exe')
+			try:
+				check_call('Installers\chrome.exe', shell=True)
+			except:
+				text1.set('Chrome local install error')
 		if dropbox.get():
 			#Run the file
-			os.system('Installers\dropbox.exe')
+			try:
+				check_call('Installers\dropbox.exe', shell=True)
+			except:
+				text1.set('Dropbox local install error')
 		if firefox.get():
 			#Run the file
-			os.system('Installers\firefox.exe')
+			try:
+				check_call('Installers\firefox.exe', shell=True)
+			except:
+				text1.set('Firefox local install error')
 		if java.get():
 			#Run the file
-			os.system('Installers\jre_7u67_32bit.exe')
-			os.system('Installers\jre_7u67_x64.exe')
+			try:
+				check_call('Installers\jre_7u67_32bit.exe', shell=True)
+			except:
+				text1.set('Java_32 local install error')
+			if machine() == 'AMD64':
+				try:
+					check_call('Installers\jre_7u67_x64.exe', shell=True)
+				except:
+					text1.set('Java_64 local install error')
 		if mbam.get():
 			#Run the file
-			os.system('Installers\mbam.exe')
+			try:
+				check_call('Installers\mbam.exe', shell=True)
+			except:
+				text1.set('Mbam local install error')
 		if reader.get():
 			#Run the file
-			os.system('Installers\pdf_adobe11.exe')
+			try:
+				check_call('Installers\pdf_adobe11.exe', shell=True)
+			except:
+				text1.set('Reader local install error')
 		if skype.get():
 			#Run the file
-			os.system('Installers\skype.exe')
+			try:
+				check_call('Installers\skype.exe', shell=True)
+			except:
+				text1.set('Skype local install error')
 		if vlc.get():
 			#Run the file
-			os.system('Installers\vlc_32bit.exe')
-
+			try:
+				check_call('Installers\media_vlc_32bit.exe', shell=True)
+			except:
+				text1.set('VLC local install error')
 
 #def messageWindow():
 #    win = Toplevel()
@@ -117,8 +168,8 @@ def zip_check():
 	win = Toplevel()
 	win.title('7-Zip version')
 	Label(win, text='Which 7-Zip version do you want?').pack()
-	Button(win, text='64 bit', command=os.system('Installers\zip_64bit.exe')).pack()
-	Button(win, text='32 bit', command=os.system('Installers\zip_32bit.exe')).pack()
+	Button(win, text='64 bit', command=check_call('Installers\zip_64bit.exe')).pack()
+	Button(win, text='32 bit', command=check_call('Installers\zip_32bit.exe')).pack()
 	
 
 #Checkbox for Chrome
@@ -177,7 +228,7 @@ lo = Button(master, text = "Local", command = local_install)
 lo.grid(row = 5, column = 1)
 
 #Displays the queue in top, using a text variable so that the list can update in real time
-State1 = Label(master, textvariable = test1)
+State1 = Label(master, textvariable = text1)
 #Position the label
 State1.grid(row = 6, column = 0, columnspan = 2)
 
