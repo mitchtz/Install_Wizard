@@ -1,10 +1,12 @@
 #Code by Mitch Zinser
 import tkinter as tk
 from tkinter import *
+from tkinter import messagebox
 
 from subprocess import check_call
 #import os
-from tkinter import messagebox
+
+from os import path, remove #For checking if a file exists and deleting it
 import urllib
 from urllib.request import urlopen, URLopener #imports urlopen, urlopener
 from platform import machine #for platform machine version to detect OS architecture
@@ -36,6 +38,9 @@ except:
 
 #Get online installer and run file once downloaded
 def online_install():
+	#Check if there is a previous ninite installer
+	if os.path.isfile('ninite.exe'):
+		os.remove('ninite.exe')
 	#Create url
 	url = urlCreate()
 	#Create object to open url
@@ -65,7 +70,7 @@ def urlCreate():
 	if firefox.get():
 		url += 'firefox-'
 	if java.get():
-		url += 'java-'
+		url += 'java8-'
 	if mbam.get():
 		url += 'malwarebytes-'
 	if reader.get():
