@@ -4,9 +4,10 @@ from tkinter import *
 from tkinter import messagebox
 
 from subprocess import check_call
-#import os
+import os
 
-from os import path, remove #For checking if a file exists and deleting it
+#from os import path, remove #For checking if a file exists and deleting it
+from shutil import rmtree #For removing folder and contents
 import urllib
 from urllib.request import urlopen, URLopener #imports urlopen, urlopener
 from platform import machine #for platform machine version to detect OS architecture
@@ -38,23 +39,46 @@ except:
 
 #Get online installer and run file once downloaded
 def online_install():
+	#Set location for file download by changing working directory
+	#Variable that stores the file name of the ninite file, the temp folder path, and the current directory
+	dl = 'ninite.exe'
+	dl_path = "c:\\Install_Wizard_Temp"
+	currentDir = os.getcwd()
+	##This should allow the download location to be changed so that the program can be run off locked flash drive
+	#Test to see if directory exists for program already, if not, create one
+	if not os.path.exists(dl_path):
+		os.makedirs(dl_path)
+	#Change working directory to one on customers computer
+	os.chdir(dl_path)
 	#Check if there is a previous ninite installer
-	if os.path.isfile('ninite.exe'):
-		os.remove('ninite.exe')
+	if os.path.isfile(dl):
+		os.remove(dl)
+		print('file removed')
 	#Create url
 	url = urlCreate()
 	#Create object to open url
 	ninite = URLopener()
 	#Download file from url and save as installer.exe
+	
 	try:
-		ninite.retrieve(url, 'ninite.exe')
+		ninite.retrieve(url, dl)
 	except: #Error in retrieving website
 		text1.set('Ninite website could\nnot be accessed')
 	#Run the file
 	try:
-		check_call('ninite.exe', shell=True)
+		check_call(dl, shell=True)
 	except: #Error in running file
 		text1.set('Error running ninite file')
+		
+	#Test to see if dl file exists, if so, delete
+	if os.path.isfile(dl):
+		os.remove(dl)	
+	#Change directory back to original working directory
+	os.chdir(currentDir)
+	#Check if directory that was created earlier still exists, if so remove it
+	if os.path.exists(dl_path):
+		rmtree(dl_path)
+		
 
 #Creates url to get ninite file from, checks all check boxes
 def urlCreate():
