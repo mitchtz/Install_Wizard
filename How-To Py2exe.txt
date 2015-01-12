@@ -1,0 +1,62 @@
+1.) Create a estup.py file that looks like this:
+
+from distutils.core import setup
+import py2exe
+
+setup(console=['Outlook2myLeave.py'])
+
+//Use setup(windows=['Outlook2myLeave.py']) to create program that runs without opening console (cmd)
+2.) Replace "Outlook2myLeave.py" with your own file name
+3.) Put your .py file in the same directory as the setup.py file
+4.) Navigate to the directory in command prompt
+5.) Type "python setup.py py2exe"
+6.) ?!?!?!?
+7.) Profit!
+
+============================
+Create one directory with all files in it,
+Use this setup.py file:
+
+from distutils.core import setup
+import py2exe
+
+setup(
+	options={'py2exe': {'bundle_files': 2, 'compressed': True, 'optimize':1}}, 
+	windows=['Install_Wizard.py'],
+	zipfile=None,
+)
+
+============================
+To create a shortcut to the .exe from another directory, use this .bat file:
+
+@echo off
+start %~dp0\dist\Install_Wizard.exe
+
+============================
+To Suppress the "This program installed correctly?" popup, include this xml file with the .exe
+Title this file (applicationname).exe.manifest (eg. Install_Wizard.exe.manifest)
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1"> 
+      <application> 
+        <!--This Id value indicates the application supports Windows Vista functionality -->
+          <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/> 
+        <!--This Id value indicates the application supports Windows 7 functionality-->
+          <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+        <!--This Id value indicates the application supports Windows 8 functionality-->
+          <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
+        <!--This Id value indicates the application supports Windows 8.1 functionality-->
+          <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
+      </application> 
+  </compatibility>
+
+  <assemblyIdentity type="win32" 
+                    name="Microsoft.Windows.Install_Wizard" 
+                    version="6.0.0.0" 
+                    processorArchitecture="x86" 
+                    publicKeyToken="0000000000000000"
+  />
+</assembly>
+

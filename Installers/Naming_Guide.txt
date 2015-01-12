@@ -1,6 +1,6 @@
 Files must be named the following and be in the Installers folder for the program to run
-7zip_32bit
-7zip_64bit
+zip_32bit
+zip_64bit
 pdf_adobe11
 chrome
 dropbox
@@ -10,4 +10,4 @@ jre_7u67_x64
 mbam
 ninite(will be autocreated, do not need to change)
 skype
-vlc_32bit
+media_vlc_32bit
